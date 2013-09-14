@@ -1,9 +1,20 @@
 from django.db import models
 
 
+class Game(models.Model):
+    name = models.CharField(max_length=500)
+    # Approximate location of game
+    longitude = models.FloatField(null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+
+    is_public = models.BooleanField(default=True)
+
+
 class Player(models.Model):
     username = models.CharField(max_length=100, unique=True)
     device_id = models.CharField(max_length=2000, unique=True)
+
+    game = models.ForeignKey(Game)
 
     first_name = models.CharField(max_length=100, default="")
     last_name = models.CharField(max_length=100, default="")
@@ -12,7 +23,7 @@ class Player(models.Model):
     last_latitude = models.FloatField(null=True, blank=True)
     last_altitude = models.FloatField(null=True, blank=True)
     last_seen = models.DateTimeField(null=True, blank=True)
-
+    
     bombs_remaining = models.IntegerField(default=1)
 
 
@@ -24,7 +35,7 @@ class Player(models.Model):
         return self.username
 
     def get_last_loc(self):
-        return last_longitude, last_latitude, last_altitude
+        return self.last_longitude, self.last_latitude, self.last_altitude
 
     def place_bomb(self, longitude, latitude, altitude):
         if self.bombs_remaining > 0:

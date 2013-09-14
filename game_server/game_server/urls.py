@@ -14,4 +14,6 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
+    url(r'^$', 'game_server.views.test'),
+    url(r'^bombs/', 'game_server.views.get_bombs'),
 )
