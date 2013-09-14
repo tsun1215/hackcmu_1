@@ -41,3 +41,5 @@ lib
 lib64
 *.pyc
 *.pyo
+
+*.db
