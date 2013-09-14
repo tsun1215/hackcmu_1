@@ -20,7 +20,7 @@ public class Game extends Activity {
 		location.init((LocationManager) getSystemService(Context.LOCATION_SERVICE));
 
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
-		final View contentView = findViewById(R.id.fullscreen_content);
+		//final View contentView = findViewById(R.id.fullscreen_content);
 		Button b = (Button)controlsView.findViewById(R.id.set_bomb);
 		b.setOnClickListener(new OnClickListener() {
 			
