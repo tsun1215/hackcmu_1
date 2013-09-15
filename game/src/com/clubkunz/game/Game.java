@@ -10,28 +10,36 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 public class Game extends FragmentActivity {
-	LocationTracker location = new LocationTracker();
 	GeofenceManager fenceman = new GeofenceManager();
+	Player me = new Player();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		fenceman.mainActivity=this;
+		me.tracker=new LocationTracker();
 
 		setContentView(R.layout.activity_game);
 		
-		location.init((LocationManager) getSystemService(Context.LOCATION_SERVICE));
+		me.tracker.init((LocationManager) getSystemService(Context.LOCATION_SERVICE));
 
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		//final View contentView = findViewById(R.id.fullscreen_content);
 		Button b = (Button)controlsView.findViewById(R.id.set_bomb);
+		Button radar = (Button)controlsView.findViewById(R.id.radar);
 		b.setOnClickListener(new OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
 				Log.i("A","A");
-				if(location.hasLocation) fenceman.addFence(location.currentLocation, 10);
+				if(me.tracker.hasLocation) fenceman.addFence(me.tracker.currentLocation, 10);
 			}
 		});
+		radar.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				ServerInfo.ping(123, 12, 12, 12, 0);
+			}
+		});
+		
 	}
 }

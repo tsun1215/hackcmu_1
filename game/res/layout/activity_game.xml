@@ -27,29 +27,43 @@
          android:fitsSystemWindows.
     -->
 
-    <FrameLayout
+   <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true" >
 
         <LinearLayout
             android:id="@+id/fullscreen_content_controls"
-            style="?buttonBarStyle"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
+            android:layout_gravity="bottom"
             android:background="@color/black_overlay"
             android:orientation="horizontal"
             tools:ignore="UselessParent" >
 
             <Button
+                android:id="@+id/radar"
+                style="?buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+            android:layout_gravity="left"
+                android:layout_weight="1"
+                android:text="Radar" />
+            <LinearLayout
+                android:layout_height="match_parent"
+                android:layout_width="20dp"
+                android:background="#0099cc" />
+            <Button
                 android:id="@+id/set_bomb"
                 style="?buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+            android:layout_gravity="right"
                 android:layout_weight="1"
-                android:text="Set Bomb" />
+                android:text="Bomb" />
         </LinearLayout>
+
+
     </FrameLayout>
 
 </FrameLayout>
