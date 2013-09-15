@@ -1,14 +1,31 @@
 from django.db import models
 from django.utils.timezone import utc
+from mission import GenerateMission
 
 
 class Game(models.Model):
     name = models.CharField(max_length=500)
+    in_game = models.BooleanField(default=False)
     # Approximate location of game
     longitude = models.FloatField(null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
 
     is_public = models.BooleanField(default=True)
+
+    def start_game(self):
+        if self.player_set.all().count() >= 5:
+            self.reassign_missions()
+    
+    def reassign_missions(self):
+        targets,friendlys = GenerateMission([p.device_id for p in self.player_set.all().order_by("pk")])
+        import pdb; pdb.set_trace()
+        players = self.player_set.all().order_by("pk")
+        for index, player in enumerate(players):
+            player.target = ""
+            player.friendlys = ""
+            player.target = targets[index]
+            for friendly in friendlys:
+                player.friendlys += friendlys+","
 
 
 class Player(models.Model):

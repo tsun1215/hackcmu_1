@@ -28,10 +28,10 @@ def GenerateMission(PlayerList):
 	Targets = GenerateTargets(PlayerList)
 	Friendlies = GenerateFriendlies(PlayerList,Targets)
 	return(Targets,Friendlies)
+	
 def main():
 	N=5
 	a = "{Num} Players".format(Num=N)
 	PlayerList = ['0','1','2','3','4']
 	for Dict in GenerateMission(PlayerList):
 		print(Dict)
-main()
