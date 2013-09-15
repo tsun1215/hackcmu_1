@@ -26,7 +26,7 @@ def test(request):
 # - Deal with scoring
 
 import logging
-logger = loggin.getLogger(__name__)
+logger = logging.getLogger(__name__)
 def register_device(request):
     if request.method == "POST":
         try:
