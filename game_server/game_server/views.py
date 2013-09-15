@@ -22,15 +22,48 @@ def test(request):
 
 
 # TODO:
-# - Handle creation of a game room
-# - Handle joining a game room
 # - Handle deletion of a game room (if players no longer exist in it)
-# - Handle the first device/user registration
+# - Deal with scoring
+
+def register_device(request):
+    if request.method == "POST":
+        try:
+            new_player = Player.objects.get(device_id=request.POST.get('device_id'))
+        except: ObjectDoesNotExist:
+            new_player = Player(username=request.POST.get("username"), 
+                                first_name=request.POST.get("f_name"), 
+                                last_name=request.POST.get("l_name"), 
+                                device_id=request.POST.get("device_id"))
+            new_player.save()
+        return HttpResponse(simplejson.dumps({"success": True, 
+                                              "device_id": new_player.device_id, 
+                                              "username": new_player.username, 
+                                              "f_name":new_player.first_name, 
+                                              "l_name":new_player.last_name}), 
+                                            content_type="application/json")
+    else:
+        return HttpResponseBadRequest()
+
+
+def create_game(request):
+    new_game = Game(name=request.POST.get("game"),
+                    longitude=request.POST.get("long"),
+                    latitude=request.POST.get("lat"),
+                    is_public=request.POST.get("public",False))
+    new_game.add_player(Player.objects.get(device_id=request.POST.get("device_id")))
+    return HttpResponse(simplejson.dumps({"success": True}), content_type="application/json")
+
+
+def list_games(request):
+    # Lists the games within a certain radius of a given longitude and latitude
+    return
+
 
 def join_game(request):
     if request.method == "POST":
         try:
             player = Player.objects.get(device_id=request.POST.get('device_id'))
+            player.clear_game_info()
         except ObjectDoesNotExist:
             # Return error telling user to register
             return
@@ -39,8 +72,7 @@ def join_game(request):
         except ObjectDoesNotExist:
             # Return error telling that game doesn't exist
             return
-        player.game = game
-        player.save()
+        game.add_player(player)
         return HttpResponse(simplejson.dumps({"success": True, "game": game.pk}), content_type="application/json")
         
 
@@ -48,7 +80,7 @@ def join_game(request):
 def get_bombs(request):
     if request.method == "POST":
         bombs = [b.get_info() for b in bombs_in_radius(float(request.POST.get("long")), float(request.POST.get("lat")), float(request.POST.get("rad")))]
-        return HttpResponse(simplejson.dumps(bombs), content_type="application/json")
+        return HttpResponse(simplejson.dumps({"bombs": bombs}), content_type="application/json")
     else:
         return HttpResponseBadRequest()
 

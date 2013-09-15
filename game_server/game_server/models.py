@@ -1,14 +1,35 @@
 from django.db import models
 from django.utils.timezone import utc
+from mission import GenerateMission
 
 
 class Game(models.Model):
     name = models.CharField(max_length=500)
+    in_game = models.BooleanField(default=False)
     # Approximate location of game
     longitude = models.FloatField(null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
 
     is_public = models.BooleanField(default=True)
+
+    def start_game(self):
+        if self.player_set.all().count() >= 5:
+            self.reassign_missions()
+
+    def add_player(self, player):
+        player.game = self
+        player.save()
+    
+    def reassign_missions(self):
+        targets,friendlys = GenerateMission([p.device_id for p in self.player_set.all().order_by("pk")])
+        import pdb; pdb.set_trace()
+        players = self.player_set.all().order_by("pk")
+        for index, player in enumerate(players):
+            player.target = ""
+            player.friendlys = ""
+            player.target = targets[index]
+            for friendly in friendlys:
+                player.friendlys += friendlys+","
 
 
 class Player(models.Model):
@@ -83,7 +104,7 @@ class Bomb(models.Model):
         return {"longitude": self.longitude, "latitude:": self.latitude, 
                 "altitude": self.altitude, "placed_by": self.placed_by.device_id, 
                 "time_placed": self.time_placed.replace(tzinfo=utc).isoformat(),
-                "radius": self.radius}
+                "radius": self.radius, "id": self.id}
 
 
 def bombs_in_radius(longitude, latitude, radius):
