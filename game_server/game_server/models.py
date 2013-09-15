@@ -22,7 +22,8 @@ class Game(models.Model):
     
     def reassign_missions(self):
         mission_arr = generate_mission([p.device_id for p in self.player_set.all().order_by("pk")])
-        for device_id in mission_arr.keys():
+        for x in mission_arr:
+            device_id = x.keys()[0]
             player = self.player_set.get(device_id=device_id)
             player.target = mission_arr[device_id]['target']
             player.friendlys = ",".join(mission_arr[device_id]['friendlys'])
