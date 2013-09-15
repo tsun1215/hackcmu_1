@@ -15,6 +15,10 @@ class Game(models.Model):
     def start_game(self):
         if self.player_set.all().count() >= 5:
             self.reassign_missions()
+
+    def add_player(self, player):
+        player.game = self
+        player.save()
     
     def reassign_missions(self):
         targets,friendlys = GenerateMission([p.device_id for p in self.player_set.all().order_by("pk")])
