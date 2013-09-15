@@ -27,8 +27,9 @@ public class ReceiveTransitionsIntentService extends IntentService {
 			Log.e("ReceiveTransitionsIntentService", "Location Services error: " + Integer.toString(errorCode));
 		} else {
 			// Get the type of transition (entry or exit)
-			int transitionType = LocationClient.getGeofenceTransition(intent);
-
+			//int transitionType = LocationClient.getGeofenceTransition(intent);
+			startActivity(new Intent(this, Game.class));
+			for(int i = 0; i < 100; i ++) System.out.println("AA");
 		}
 	}
 }
