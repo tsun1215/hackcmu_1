@@ -121,7 +121,6 @@ public class ServerInfo {
 				while(in.read(buffer) > 0){
 					s += String.valueOf(buffer).trim();
 				}
-				System.out.println(s);
 				in.close();
 				try {
 					result = new JSONObject(s);

@@ -28,10 +28,37 @@ public class Game extends FragmentActivity {
 		//fenceman.mainActivity=this;
 		me.tracker=new LocationTracker(this);
 
-		setContentView(R.layout.activity_game);
-		System.out.println("A");
 		me.tracker.init((LocationManager) getSystemService(Context.LOCATION_SERVICE));
 
+		toMain();
+		doTestGame();
+	}
+	
+	private void toRadar(){
+		me.tracker.setUpdate(me.tracker.fastSpeed);
+		setContentView(R.layout.radar);
+		
+		View controlsView = findViewById(R.id.fullscreen_content_controls);
+		Button radar = (Button)controlsView.findViewById(R.id.radarExit);
+		radar.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				toMain();
+			}
+		});
+		Button b = (Button)controlsView.findViewById(R.id.set_bomb);
+		b.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				bomb();
+			}
+		});
+	}
+	
+	private void toMain(){
+		setContentView(R.layout.activity_game);
+		me.tracker.setUpdate(me.tracker.slowSpeed);
+		
 		View controlsView = findViewById(R.id.fullscreen_content_controls);
 		Button b = (Button)controlsView.findViewById(R.id.set_bomb);
 		Button radar = (Button)controlsView.findViewById(R.id.radar);
@@ -39,48 +66,42 @@ public class Game extends FragmentActivity {
 			@Override
 			public void onClick(View v) {
 				if(me.tracker.hasLocation){
-					if(me.bombs > 0){
-						JSONObject j = server.game_bomb(me.id, (float)me.tracker.currentLocation.getLongitude(), 
-								(float)me.tracker.currentLocation.getLatitude(), (float)me.tracker.currentLocation.getAltitude());
-						try {
-							if(j.getBoolean("success")){
-								me.bombs--;
-								Location l = new Location("bomb");
-								l.setLatitude(j.getDouble("latitude"));
-								l.setLongitude(j.getDouble("longitude"));
-								l.setAltitude(j.getDouble("altitude"));
-								bombs.add(new Bomb(j.getInt("id"), j.getString("placed_by"), l, j.getDouble("radius")));
-							}
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
-					}
+					bomb();
 				}
 			}
 		});
 		radar.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				me.tracker.setUpdate(me.tracker.fastSpeed);
-				setContentView(R.layout.radar);
-				
-				View controlsView = findViewById(R.id.fullscreen_content_controls);
-				Button radar = (Button)controlsView.findViewById(R.id.radarExit);
-				radar.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						me.tracker.setUpdate(me.tracker.slowSpeed);
-						setContentView(R.layout.activity_game);
-					}
-				});
+				toRadar();
 			}
 		});
-		doTestGame();
+	}
+	
+	private void bomb(){
+		if(me.tracker.hasLocation){
+			//if(me.bombs > 0){
+				JSONObject j = server.game_bomb(me.id, (float)me.tracker.currentLocation.getLongitude(), 
+						(float)me.tracker.currentLocation.getLatitude(), (float)me.tracker.currentLocation.getAltitude());
+				try {
+					if(j.getBoolean("success")){
+						me.bombs--;
+						server.game_bomb(me.id, (float)me.tracker.currentLocation.getLongitude(), 
+								(float)me.tracker.currentLocation.getLatitude(), 100);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			//}
+		}
 	}
 	
 	public void doTestGame(){
-//		System.out.println(server.register("david", "David", "Lindenbaum", me.id));
-		//System.out.println(server.game_new("test", me.id, -79.9426f, 40.44623f, true));
+		System.out.println(server.register("david", "David", "Lindenbaum", me.id));
+		System.out.println(server.game_join(me.id, 1));
+	//	System.out.println(server.game_new("test", me.id, -79.9426f, 40.44623f, true));
+	//	System.out.println(server.game_list(me.id, -79.9426f, 40.44623f));
+		
 //		System.out.println(server.game_list(me.id, -79.9426f, 40.44623f));
 //		System.out.println(server.game_bomb(me.id, -79.9526f, 40.44623f, 100));
 //		System.out.println(server.game_bomb(me.id, -79.9466f, 40.44623f, 100));
@@ -112,7 +133,7 @@ public class Game extends FragmentActivity {
 				e.printStackTrace();
 			}
 			for(Bomb b : bombs){
-				if(b.isInRange(me.tracker.currentLocation)) explode(b);
+				//if(b.isInRange(me.tracker.currentLocation)) explode(b);
 			}
 		}
 		}

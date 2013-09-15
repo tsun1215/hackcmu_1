@@ -47,8 +47,7 @@
                 android:text="Radar" />
             <LinearLayout
                 android:layout_height="match_parent"
-                android:layout_width="20dp"
-                android:background="#0099cc" />
+                android:layout_width="20dp" />
             <Button
                 android:id="@+id/set_bomb"
                 style="?buttonBarButtonStyle"
