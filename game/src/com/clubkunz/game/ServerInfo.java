@@ -12,45 +12,36 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ServerInfo {
-	public JSONObject ping(int id, double lon, double lat, double alt, int event){
-		NetworkThread t = new NetworkThread(id, lon, lat, alt, event);
+	public JSONObject register(String username, String fname, String lname, String id){
+		JSONObject send = null;
+		try{
+			send = new JSONObject();
+			send.put("username",username);
+			send.put("f_name",fname);
+			send.put("l_name",lname);
+			send.put("device_id",id);
+		}catch(JSONException e){
+			e.printStackTrace();
+		}
+		NetworkThread t = new NetworkThread(send);
 		t.start();
 		try {t.join();} catch (InterruptedException e) {}
 		return t.result;
 	}
 	
 	private class NetworkThread extends Thread{
-		int id;
-		double lon;
-		double lat;
-		double alt;
-		int event;
+		JSONObject send;
 		
 		JSONObject result;
 		
-		NetworkThread(int id, double lon, double lat, double alt, int event){
-			this.id=id;
-			this.lon=lon;
-			this.lat=lat;
-			this.alt=alt;
-			this.event=event;
+		NetworkThread(JSONObject j){
+			send = j;
 		}
 		public void run(){
-			JSONObject send = null;
 			URL url = null;
 			try{
-				url = new URL("128.237.132.169:8000");
+				url = new URL("http://hackcmu.twebspace.com");
 			}catch(MalformedURLException e){
-				e.printStackTrace();
-			}
-			try{
-				send = new JSONObject();
-				send.put("id",Integer.toString(id));
-				send.put("lon",Double.toString(lon));
-				send.put("lat",Double.toString(lat));
-				send.put("alt", Double.toString(alt));
-				send.put("event",Integer.toString(event));
-			}catch(JSONException e){
 				e.printStackTrace();
 			}
 			HttpURLConnection connection=null;
@@ -69,9 +60,12 @@ public class ServerInfo {
 				InputStreamReader in = new InputStreamReader(connection.getInputStream());
 				char[] buffer = new char[10000];
 				in.read(buffer);
-				System.out.println(String.valueOf(buffer));
+				String s = String.valueOf(buffer).trim();
 				in.close();
+				result = new JSONObject(s);
 			}catch(IOException e){
+				e.printStackTrace();
+			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
