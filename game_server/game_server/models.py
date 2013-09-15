@@ -81,6 +81,14 @@ class Player(models.Model):
         else:
             return None
 
+    def killed_target_type(self, victim):
+        if victim.device_id == self.target:
+            return 0
+        elif victim.device_id in self.hitlist.split(","):
+            return 1
+        elif victim.device_id in self.friendlys.split(","):
+            return 2
+
 
 class Bomb(models.Model):
     placed_by = models.ForeignKey(Player)
