@@ -1,19 +1,22 @@
 package com.clubkunz.game;
 
-import android.app.Activity;
 import android.content.Context;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-public class Game extends Activity {
+public class Game extends FragmentActivity {
 	LocationTracker location = new LocationTracker();
+	GeofenceManager fenceman = new GeofenceManager();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		fenceman.mainActivity=this;
 
 		setContentView(R.layout.activity_game);
 		
@@ -26,7 +29,8 @@ public class Game extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				
+				Log.i("A","A");
+				if(location.hasLocation) fenceman.addFence(location.currentLocation, 10);
 			}
 		});
 	}

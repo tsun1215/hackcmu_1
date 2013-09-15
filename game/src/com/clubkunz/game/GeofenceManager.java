@@ -1,8 +1,8 @@
 package com.clubkunz.game;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -23,10 +23,17 @@ import com.google.android.gms.location.LocationStatusCodes;
 
 
 
-public class GeofenceManager extends FragmentActivity implements ConnectionCallbacks, OnConnectionFailedListener, OnAddGeofencesResultListener {
+public class GeofenceManager implements ConnectionCallbacks, OnConnectionFailedListener, OnAddGeofencesResultListener {
 	private LocationClient mLocationClient;
 	private boolean mInProgress;
 	private List<Geofence> geofences;
+	public FragmentActivity mainActivity;
+	
+	public void addFence(Coordinate c, float radius){
+		geofences=new ArrayList<Geofence>();
+		geofences.add(new Geofence.Builder().setCircularRegion(c.latitude, c.longitude, radius).setExpirationDuration(5*60*1000).setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT).setRequestId("test").build());
+		addGeofences();
+	}
 
 	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	public static class ErrorDialogFragment extends DialogFragment {
@@ -40,28 +47,18 @@ public class GeofenceManager extends FragmentActivity implements ConnectionCallb
 		}
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-		case CONNECTION_FAILURE_RESOLUTION_REQUEST :
-			switch (resultCode) {
-			case Activity.RESULT_OK :
-				break;
-			}
-		}
-	}
 	private boolean servicesConnected() {
-		int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+		int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(mainActivity);
 		if (ConnectionResult.SUCCESS == resultCode) {
 			Log.d("Geofence Detection", "Google Play services is available.");
 			return true;
 		} else {
-			Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(resultCode, this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+			Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(resultCode, mainActivity, CONNECTION_FAILURE_RESOLUTION_REQUEST);
 			if (errorDialog != null) {
 				ErrorDialogFragment errorFragment = new ErrorDialogFragment();
 				errorFragment.setDialog(errorDialog);
 
-				errorFragment.show(getSupportFragmentManager(), "Geofence Detection");
+				errorFragment.show(mainActivity.getSupportFragmentManager(), "Geofence Detection");
 			}
 			return false;
 		}
@@ -74,13 +71,13 @@ public class GeofenceManager extends FragmentActivity implements ConnectionCallb
 	 */
 	private PendingIntent getTransitionPendingIntent() {
 		// Create an explicit Intent
-		Intent intent = new Intent(this, ReceiveTransitionsIntentService.class);
-		return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		Intent intent = new Intent(mainActivity, ReceiveTransitionsIntentService.class);
+		return PendingIntent.getService(mainActivity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 	}
 
 	public void addGeofences() {
 		if (!servicesConnected()) return;
-		mLocationClient = new LocationClient(this, this, this);
+		mLocationClient = new LocationClient(mainActivity, this, this);
 		if (!mInProgress) {
 			mInProgress = true;
 			mLocationClient.connect();
@@ -98,7 +95,9 @@ public class GeofenceManager extends FragmentActivity implements ConnectionCallb
 	@Override
 	public void onAddGeofencesResult(int statusCode, String[] geofenceRequestIds) {
 		if (LocationStatusCodes.SUCCESS == statusCode) {
+			Log.i("Geofence add","Geofence add success");
 		} else {
+			Log.e("Geofence", ""+statusCode+" "+LocationStatusCodes.ERROR+" "+LocationStatusCodes.GEOFENCE_NOT_AVAILABLE);
 			Log.e("Geofence add","Geofence add failed");
 		}
 		// Turn off the in progress flag and disconnect the client
@@ -117,17 +116,17 @@ public class GeofenceManager extends FragmentActivity implements ConnectionCallb
 		mInProgress = false;
 		if (connectionResult.hasResolution()) {
 			try {
-				connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+				connectionResult.startResolutionForResult(mainActivity, CONNECTION_FAILURE_RESOLUTION_REQUEST);
 			} catch (SendIntentException e) {
 				e.printStackTrace();
 			}
 		} else {
 			int errorCode = connectionResult.getErrorCode();
-			Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(errorCode, this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+			Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(errorCode, mainActivity, CONNECTION_FAILURE_RESOLUTION_REQUEST);
 			if (errorDialog != null) {
 				ErrorDialogFragment errorFragment = new ErrorDialogFragment();
 				errorFragment.setDialog(errorDialog);
-				errorFragment.show(getSupportFragmentManager(), "Geofence Detection");
+				errorFragment.show(mainActivity.getSupportFragmentManager(), "Geofence Detection");
 			}
 		}
 	}
