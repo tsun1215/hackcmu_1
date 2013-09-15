@@ -33,7 +33,7 @@ class Game(models.Model):
 
 
 class Player(models.Model):
-    username = models.CharField(max_length=100, unique=True)
+    username = models.CharField(max_length=100)
     device_id = models.CharField(max_length=2000, unique=True)
 
     first_name = models.CharField(max_length=100, default="")
@@ -89,6 +89,7 @@ class Player(models.Model):
             return 1
         elif victim.device_id in self.friendlys.split(","):
             return 2
+        return None
 
 
 class Bomb(models.Model):
