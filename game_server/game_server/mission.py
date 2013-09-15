@@ -30,7 +30,4 @@ def generate_targets(player_list):
 def generate_mission(player_list):
 	targets = generate_targets(player_list)
 	friendlys = generate_friendlys(player_list,targets)
-	result = []
-	for player in player_list:
-		result.append({player:{"target":targets[player],"friendlys":friendlys[player]})
-	return result
+	return {player:{"target":targets[player],"friendlys":friendlys[player]} for player in player_list}
