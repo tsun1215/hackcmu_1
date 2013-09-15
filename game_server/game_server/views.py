@@ -51,12 +51,18 @@ def create_game(request):
                     latitude=request.POST.get("lat"),
                     is_public=request.POST.get("public",False))
     new_game.add_player(Player.objects.get(device_id=request.POST.get("device_id")))
-    return HttpResponse(simplejson.dumps({"success": True}), content_type="application/json")
+    return HttpResponse(simplejson.dumps({"success": True, "game_id": new_game.pk}), content_type="application/json")
 
 
 def list_games(request):
     # Lists the games within a certain radius of a given longitude and latitude
-    return
+    matched_games = []
+    for g in Game.objects.all():
+        matched_games.append({"id": g.pk,
+                              "name": g.name,
+                              "players": g.player_set.all().count(),
+                              })
+    return HttpResponse(simplejson.dumps({"games":matched_games}), content_type="application/json")
 
 
 def join_game(request):
