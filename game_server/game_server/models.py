@@ -19,20 +19,24 @@ class Game(models.Model):
     def add_player(self, player):
         player.game = self
         player.save()
+        player.clear_game_info()
+        if not self.in_game and self.player_set.count() >= 5:
+            self.start_game()
     
     def reassign_missions(self):
         mission_arr = generate_mission([p.device_id for p in self.player_set.all().order_by("pk")])
-        for device_id in mission_arr.keys():
+        for x in mission_arr:
+            device_id = x.keys()[0]
             player = self.player_set.get(device_id=device_id)
-            player.target = mission_arr[device_id]['target']
-            player.friendlys = ",".join(mission_arr[device_id]['friendlys'])
+            player.target = x[device_id]['target']
+            player.friendlys = ",".join(x[device_id]['friendlys'])
             player.save()
 
 
 
 
 class Player(models.Model):
-    username = models.CharField(max_length=100, unique=True)
+    username = models.CharField(max_length=100)
     device_id = models.CharField(max_length=2000, unique=True)
 
     first_name = models.CharField(max_length=100, default="")
@@ -77,9 +81,19 @@ class Player(models.Model):
             new_bomb = Bomb(placed_by=self, longitude=longitude, latitude=latitude, altitude=altitude)
             new_bomb.save()
             self.bombs_remaining-=1
+            self.save()
             return new_bomb
         else:
             return None
+
+    def killed_target_type(self, victim):
+        if victim.device_id == self.target:
+            return 0
+        elif victim.device_id in self.hitlist.split(","):
+            return 1
+        elif victim.device_id in self.friendlys.split(","):
+            return 2
+        return None
 
 
 class Bomb(models.Model):

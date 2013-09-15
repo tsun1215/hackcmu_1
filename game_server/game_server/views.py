@@ -113,6 +113,43 @@ def place_bomb(request):
 # Handles when a player is hit by a bomb
 def bomb_player(request):
     if request.method == "POST":
-        return HttpResponse(simplejson.dumps({"test": [1,2,3]}), content_type="application/json")
+        b = Bomb.objects.get(pk=int(request.POST.get("bomb_id")))
+        killer = b.placed_by
+        victim = Player.objects.get(device_id=request.POST.get("device_id"))
+        relationship = killer.killed_target_type(victim)
+        if relationship == 0:
+            # Killed target
+            killer.target = victim.target
+            victim.target = victim.game.player_set.all().exclude(victim).exclude(device_id__contains=victim.target.device_id).order_by("?")[0]
+            # Add points
+        elif relationship == 1:
+            # Killed someone on hitlist
+            hitlist = killer.hitlist.split(",")
+            hitlist.remove(victim.device_id)
+            killer.hitlist = ",".join(hitlist)
+            killer.save()
+            # Add points
+        elif relationship == 2:
+            # Killed innocent
+            # Removes killer from victim's friendlys
+            v_friendlys_list = victim.friendlys.split(",")
+            v_friendlys_list.remove(killer.device_id)
+            victim.friendlys = ",".join(v_friendlys_list)
+            # Removes victim from killer's friendlys list if exists
+            friendlys_list = killer.friendlys.split(",")
+            try:
+                friendlys_list.remove(victim.device_id)
+                killer.friendlys = ",".join(friendlys_list)
+            except KeyError:
+                pass
+            # Adds killer to victim's hitlist
+            hitlist = victim.hitlist.split(",")
+            hitlist.append(killer)
+            victim.hitlist = ",".join(hitlist)
+            vicim.save()
+            killer.save()
+            # Deduct points
+        b.delete()
+        return HttpResponse(simplejson.dumps({"success": True}))
     else:
         return HttpResponseBadRequest()
