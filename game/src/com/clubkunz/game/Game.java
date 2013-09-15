@@ -12,6 +12,7 @@ import android.widget.Button;
 public class Game extends FragmentActivity {
 	GeofenceManager fenceman = new GeofenceManager();
 	Player me = new Player();
+	ServerInfo server = new ServerInfo();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +38,7 @@ public class Game extends FragmentActivity {
 		radar.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				ServerInfo.ping(123, 12, 12, 12, 0);
+				server.ping(123, 12, 12, 12, 0);
 			}
 		});
 		
