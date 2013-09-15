@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.timezone import utc
-from mission import GenerateMission
+from mission import generate_mission
 
 
 class Game(models.Model):
@@ -21,15 +21,14 @@ class Game(models.Model):
         player.save()
     
     def reassign_missions(self):
-        targets,friendlys = GenerateMission([p.device_id for p in self.player_set.all().order_by("pk")])
-        import pdb; pdb.set_trace()
-        players = self.player_set.all().order_by("pk")
-        for index, player in enumerate(players):
-            player.target = ""
-            player.friendlys = ""
-            player.target = targets[index]
-            for friendly in friendlys:
-                player.friendlys += friendlys+","
+        mission_arr = generate_mission([p.device_id for p in self.player_set.all().order_by("pk")])
+        for device_id in mission_arr.keys():
+            player = self.player_set.get(device_id=device_id)
+            player.target = mission_arr[device_id]['target']
+            player.friendlys = ",".join(mission_arr[device_id]['friendlys'])
+            player.save()
+
+
 
 
 class Player(models.Model):
