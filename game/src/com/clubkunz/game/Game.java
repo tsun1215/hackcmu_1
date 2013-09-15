@@ -43,4 +43,10 @@ public class Game extends FragmentActivity {
 		});
 		
 	}
+	//(\_/)
+	//(0.0)
+	//(,_,)
+	class Struggle{
+		public final boolean WAR = true; //War, what is it good for?
+	}
 }
