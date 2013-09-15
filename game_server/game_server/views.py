@@ -23,6 +23,7 @@ def test(request):
 
 # TODO:
 # - Handle deletion of a game room (if players no longer exist in it)
+# - Deal with scoring
 
 def register_device(request):
     if request.method == "POST":
@@ -79,7 +80,7 @@ def join_game(request):
 def get_bombs(request):
     if request.method == "POST":
         bombs = [b.get_info() for b in bombs_in_radius(float(request.POST.get("long")), float(request.POST.get("lat")), float(request.POST.get("rad")))]
-        return HttpResponse(simplejson.dumps(bombs), content_type="application/json")
+        return HttpResponse(simplejson.dumps({"bombs": bombs}), content_type="application/json")
     else:
         return HttpResponseBadRequest()
 
