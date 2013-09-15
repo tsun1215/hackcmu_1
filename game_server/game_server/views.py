@@ -42,7 +42,7 @@ def register_device(request):
                                               "l_name":new_player.last_name}), 
                                             content_type="application/json")
     else:
-        return HttpResponseBadRequest()
+        return HttpResponseBadRequest("Not a post request")
 
 
 def create_game(request):
