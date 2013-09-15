@@ -31,6 +31,7 @@ def register_device(request):
     if request.method == "POST":
         try:
             new_player = Player.objects.get(device_id=request.POST.get('device_id'))
+            return HttpResponse(device_id=="android_id")
         except ObjectDoesNotExist:
             return HttpResponse(device_id=="android_id")
             new_player = Player(username=request.POST.get("username"), 
