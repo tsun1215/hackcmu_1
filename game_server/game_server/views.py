@@ -25,8 +25,6 @@ def test(request):
 # - Handle deletion of a game room (if players no longer exist in it)
 # - Deal with scoring
 
-import logging
-logger = logging.getLogger(__name__)
 def register_device(request):
     if request.method == "POST":
         try:
@@ -37,6 +35,7 @@ def register_device(request):
                                 last_name=request.POST.get("l_name"), 
                                 device_id=request.POST.get("device_id"))
             new_player.save()
+            # Deal with invalid username/not unique username
         return HttpResponse(simplejson.dumps({"success": True, 
                                               "device_id": new_player.device_id, 
                                               "username": new_player.username, 
@@ -49,9 +48,10 @@ def register_device(request):
 
 def create_game(request):
     new_game = Game(name=request.POST.get("game"),
-                    longitude=request.POST.get("long"),
-                    latitude=request.POST.get("lat"),
+                    longitude=float(request.POST.get("long")),
+                    latitude=float(request.POST.get("lat")),
                     is_public=request.POST.get("public",False))
+    new_game.save()
     new_game.add_player(Player.objects.get(device_id=request.POST.get("device_id")))
     return HttpResponse(simplejson.dumps({"success": True, "game_id": new_game.pk}), content_type="application/json")
 
@@ -101,7 +101,7 @@ def place_bomb(request):
         except ObjectDoesNotExist:
             # Return error telling user to register
             return
-        bomb = player.place_bomb(request.POST.get("long"), request.POST.get("lat"), request.POST.get("alt"))
+        bomb = player.place_bomb(float(request.POST.get("long")), float(request.POST.get("lat")), float(request.POST.get("alt")))
         if bomb == None:
             # Error Code 1: Not enough bombs
             return HttpResponse(simplejson.dumps({"success": False, "error_code": 1}))
