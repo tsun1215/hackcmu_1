@@ -19,6 +19,9 @@ class Game(models.Model):
     def add_player(self, player):
         player.game = self
         player.save()
+        player.clear_game_info()
+        if !self.in_game and self.player_set.count() >= 5:
+            start_game()
     
     def reassign_missions(self):
         mission_arr = generate_mission([p.device_id for p in self.player_set.all().order_by("pk")])
@@ -78,6 +81,7 @@ class Player(models.Model):
             new_bomb = Bomb(placed_by=self, longitude=longitude, latitude=latitude, altitude=altitude)
             new_bomb.save()
             self.bombs_remaining-=1
+            self.save()
             return new_bomb
         else:
             return None
