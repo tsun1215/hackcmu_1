@@ -30,12 +30,12 @@ def register_device(request):
         try:
             new_player = Player.objects.get(device_id=request.POST.get('device_id'))
         except ObjectDoesNotExist:
-            return HttpResponse("This is a test")
             new_player = Player(username=request.POST.get("username"), 
                                 first_name=request.POST.get("f_name"), 
                                 last_name=request.POST.get("l_name"), 
                                 device_id=request.POST.get("device_id"))
             new_player.save()
+            return HttpResponse("This is a testing test")
         return HttpResponse(simplejson.dumps({"success": True, 
                                               "device_id": new_player.device_id, 
                                               "username": new_player.username, 
