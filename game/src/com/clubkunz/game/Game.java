@@ -1,5 +1,7 @@
 package com.clubkunz.game;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ public class Game extends FragmentActivity {
 	GeofenceManager fenceman = new GeofenceManager();
 	Player me = new Player();
 	ServerInfo server = new ServerInfo();
+	ArrayList<Bomb> bombs=new ArrayList<Bomb>();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +41,7 @@ public class Game extends FragmentActivity {
 		radar.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//server.ping(123, 12, 12, 12, 0);
+				setContentView(R.layout.radar);
 			}
 		});
 		
