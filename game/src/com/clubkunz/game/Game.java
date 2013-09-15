@@ -38,7 +38,7 @@ public class Game extends FragmentActivity {
 		radar.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				server.ping(123, 12, 12, 12, 0);
+				//server.ping(123, 12, 12, 12, 0);
 			}
 		});
 		
