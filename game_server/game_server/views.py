@@ -47,7 +47,7 @@ def register_device(request):
 
 
 def create_game(request):
-    new_game = Game(name=request.POST.get("game"),
+    new_game = Game(name=request.POST.get("name"),
                     longitude=float(request.POST.get("long")),
                     latitude=float(request.POST.get("lat")),
                     is_public=request.POST.get("public",False))
