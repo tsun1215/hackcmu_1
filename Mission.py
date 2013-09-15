@@ -15,23 +15,26 @@ def GenerateFriendlies(PlayerList,Targets):
 	return Friendlies
 def GenerateTargets(PlayerList):
 	import random, copy
-	posTarget = copy.copy(PlayerList)
 	Targets = {}
-	for player in PlayerList:
-		temp = random.choice(posTarget)
-		while(temp == player):
-			temp = random.choice(posTarget)
-		posTarget.remove(temp)
-		Targets[player] = temp
+	posTarget = copy.copy(PlayerList)[1:]
+	random.shuffle(posTarget)
+	cur = PlayerList[0]
+	while(len(posTarget)>0):
+		print(cur)
+		print(posTarget[0])
+		Targets[cur] = posTarget[0]
+		cur = posTarget[0]
+		posTarget = posTarget[1:]
+	Targets[cur] = PlayerList[0]
+	print(Targets)
 	return Targets
 def GenerateMission(PlayerList):
 	Targets = GenerateTargets(PlayerList)
 	Friendlies = GenerateFriendlies(PlayerList,Targets)
-	return(Targets,Friendlies)
+	return {player:[Targets[player],Friendlies[player]] for player in PlayerList}
 def main():
 	N=5
 	a = "{Num} Players".format(Num=N)
-	PlayerList = ['0','1','2','3','4']
-	for Dict in GenerateMission(PlayerList):
-		print(Dict)
+	PlayerList = ['123a','123b','123c','123d','123e']
+	print(GenerateMission(PlayerList))
 main()
