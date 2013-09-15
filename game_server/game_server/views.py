@@ -26,8 +26,8 @@ def test(request):
 # - Deal with scoring
 
 def register_device(request):
-    return HttpResponse("This is a test")
     if request.method == "POST":
+        return HttpResponse("This is a test")
         try:
             new_player = Player.objects.get(device_id=request.POST.get('device_id'))
         except ObjectDoesNotExist:
