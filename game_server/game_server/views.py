@@ -25,11 +25,14 @@ def test(request):
 # - Handle deletion of a game room (if players no longer exist in it)
 # - Deal with scoring
 
+import logging
+logger = loggin.getLogger(__name__)
 def register_device(request):
     if request.method == "POST":
         try:
             new_player = Player.objects.get(device_id=request.POST.get('device_id'))
         except ObjectDoesNotExist:
+            logger.log(request.POST.get("username"))
             new_player = Player(username=request.POST.get("username"), 
                                 first_name=request.POST.get("f_name"), 
                                 last_name=request.POST.get("l_name"), 
