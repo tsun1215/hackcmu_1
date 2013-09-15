@@ -25,8 +25,8 @@ class Game(models.Model):
         for x in mission_arr:
             device_id = x.keys()[0]
             player = self.player_set.get(device_id=device_id)
-            player.target = mission_arr[device_id]['target']
-            player.friendlys = ",".join(mission_arr[device_id]['friendlys'])
+            player.target = mission_arr[x][device_id]['target']
+            player.friendlys = ",".join(mission_arr[x][device_id]['friendlys'])
             player.save()
 
 
