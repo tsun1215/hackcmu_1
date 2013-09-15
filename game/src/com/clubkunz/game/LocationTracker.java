@@ -10,7 +10,7 @@ public class LocationTracker {
 	LocationManager manager;
 	int updateFreq = 2000;
 	boolean hasLocation = false;
-	Coordinate currentLocation;
+	Location currentLocation;
 	
 	Game g;
 	
@@ -36,7 +36,7 @@ public class LocationTracker {
 			
 			@Override
 			public void onLocationChanged(Location location) {
-				currentLocation = new Coordinate(location.getLongitude(), location.getLatitude(), location.getAltitude());
+				currentLocation = location;
 				if(location.getAccuracy() <= 20){
 					hasLocation = true;
 					g.update();
