@@ -20,7 +20,7 @@ class Game(models.Model):
         player.game = self
         player.save()
         player.clear_game_info()
-        if !self.in_game and self.player_set.count() >= 5:
+        if not self.in_game and self.player_set.count() >= 5:
             self.start_game()
     
     def reassign_missions(self):
