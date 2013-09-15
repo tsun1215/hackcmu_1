@@ -100,7 +100,7 @@ class Bomb(models.Model):
         return "(%s) <%.3f, %.3f, %.3f>" % (self.placed_by.username, self.longitude, self.latitude, self.altitude)
 
     def get_info(self):
-        return {"longitude": self.longitude, "latitude:": self.latitude, 
+        return {"longitude": self.longitude, "latitude": self.latitude, 
                 "altitude": self.altitude, "placed_by": self.placed_by.device_id, 
                 "time_placed": self.time_placed.replace(tzinfo=utc).isoformat(),
                 "radius": self.radius, "id": self.id}
