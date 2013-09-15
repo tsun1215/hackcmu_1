@@ -17,16 +17,11 @@ public class LocationTracker {
 		Criteria c = new Criteria();
 		c.setAccuracy(Criteria.ACCURACY_FINE);
 		manager.requestLocationUpdates("gps", updateFreq, 0, new LocationListener() {
+			@Override
+			public void onStatusChanged(String provider, int status, Bundle extras) {}
 			
 			@Override
-			public void onStatusChanged(String provider, int status, Bundle extras) {
-				
-			}
-			
-			@Override
-			public void onProviderEnabled(String provider) {
-				
-			}
+			public void onProviderEnabled(String provider) {}
 			
 			@Override
 			public void onProviderDisabled(String provider) {
