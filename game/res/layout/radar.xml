@@ -38,7 +38,7 @@
             tools:ignore="UselessParent" >
 
             <Button
-                android:id="@+id/radar"
+                android:id="@+id/radarExit"
                 style="?buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

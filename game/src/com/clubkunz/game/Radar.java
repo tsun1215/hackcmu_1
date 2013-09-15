@@ -9,7 +9,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class Radar extends SurfaceView implements SurfaceHolder.Callback{
-	private final int range = 100;
+	private final int range = 1000;
 	RunnerThread runner;
 	Game g;
 	
@@ -38,11 +38,10 @@ public class Radar extends SurfaceView implements SurfaceHolder.Callback{
 		synchronized(g.bombs){
 			for(Bomb b : g.bombs){
 				double dist = b.location.distanceTo(g.me.tracker.currentLocation);
-				System.out.println(dist);
 				if(dist < range){
-					double angle = Math.toRadians(90 - g.me.tracker.currentLocation.bearingTo(b.location));
+					double angle = Math.toRadians(90 - g.me.tracker.currentLocation.getBearing() - g.me.tracker.currentLocation.bearingTo(b.location));
 					int r = (int)(((double)dist/range)*radius);
-					canvas.drawCircle((float)(r*Math.cos(angle)), (float)(r*Math.sin(angle)), 10, p);
+					canvas.drawCircle((float)(r*Math.cos(angle) + w/2d), (float)(r*Math.sin(angle) + h/2d), 10, p);
 				}
 			}
 		}
@@ -53,11 +52,14 @@ public class Radar extends SurfaceView implements SurfaceHolder.Callback{
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
+
 		runner.start();
 	}
 
 	@Override
-	public void surfaceDestroyed(SurfaceHolder holder) {}
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		runner.running=false;
+	}
 
 	private class RunnerThread extends Thread{
 		private Radar radar;

@@ -29,7 +29,7 @@ public class Game extends FragmentActivity {
 		me.tracker=new LocationTracker(this);
 
 		setContentView(R.layout.activity_game);
-		
+		System.out.println("A");
 		me.tracker.init((LocationManager) getSystemService(Context.LOCATION_SERVICE));
 
 		View controlsView = findViewById(R.id.fullscreen_content_controls);
@@ -61,27 +61,41 @@ public class Game extends FragmentActivity {
 		radar.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				me.tracker.setUpdate(me.tracker.fastSpeed);
 				setContentView(R.layout.radar);
+				
+				View controlsView = findViewById(R.id.fullscreen_content_controls);
+				Button radar = (Button)controlsView.findViewById(R.id.radarExit);
+				radar.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						me.tracker.setUpdate(me.tracker.slowSpeed);
+						setContentView(R.layout.activity_game);
+					}
+				});
 			}
 		});
 		doTestGame();
 	}
 	
 	public void doTestGame(){
-		System.out.println(server.register("da5id", "David", "Lindenbaum", me.id));
-		System.out.println(server.game_new(me.id, -79.9426f, 40.44623f, true));
-		System.out.println(server.game_list(me.id, -79.9426f, 40.44623f));
-		Location l = new Location("A");
-		l.setLatitude(40.45623);
-		l.setLongitude(-79.9426);
-		bombs.add(new Bomb(1, me.id, l, 10));
+//		System.out.println(server.register("david", "David", "Lindenbaum", me.id));
+		//System.out.println(server.game_new("test", me.id, -79.9426f, 40.44623f, true));
+//		System.out.println(server.game_list(me.id, -79.9426f, 40.44623f));
+//		System.out.println(server.game_bomb(me.id, -79.9526f, 40.44623f, 100));
+//		System.out.println(server.game_bomb(me.id, -79.9466f, 40.44623f, 100));
+//		Location l = new Location("A");
+//		l.setLatitude(40.44603);
+//		l.setLongitude(-79.9426);
+//		bombs.add(new Bomb(1, me.id, l, 10));
+//		me.tracker.currentLocation= new Location("A");
+//		me.tracker.currentLocation.setLatitude(40.44623);
+//		me.tracker.currentLocation.setLongitude(-79.9426);
 	}
 	
 	public void update(){
-		JSONObject o = server.game_refresh(me.id, (float)me.tracker.currentLocation.getLongitude(), (float)me.tracker.currentLocation.getLatitude(), 100);
-		if(o == null){
-			
-		}else{
+		JSONObject o = server.game_refresh(me.id, (float)me.tracker.currentLocation.getLongitude(), (float)me.tracker.currentLocation.getLatitude(), 10000);
+		if(o != null){
 		synchronized(bombs){
 			bombs=new ArrayList<Bomb>();
 			try {
