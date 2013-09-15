@@ -187,6 +187,7 @@ containing a value of this type.
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
         public static final int radar=0x7f050007;
+        public static final int radarExit=0x7f050009;
         public static final int satellite=0x7f050002;
         public static final int set_bomb=0x7f050008;
         public static final int terrain=0x7f050003;

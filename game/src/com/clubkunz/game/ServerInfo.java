@@ -37,8 +37,9 @@ public class ServerInfo {
 		try {t.join();} catch (InterruptedException e) {}
 		return t.result;
 	}
-	public JSONObject game_new(String id,float lon, float lat, boolean publ){
+	public JSONObject game_new(String name, String id,float lon, float lat, boolean publ){
 		List<NameValuePair> send = new ArrayList<NameValuePair>();
+        send.add(new BasicNameValuePair("name", name));
         send.add(new BasicNameValuePair("device_id", id));
         send.add(new BasicNameValuePair("long", String.valueOf(lon)));
         send.add(new BasicNameValuePair("lat", String.valueOf(lat)));
@@ -93,7 +94,7 @@ public class ServerInfo {
 		List<NameValuePair> send = new ArrayList<NameValuePair>();
         send.add(new BasicNameValuePair("device_id", id));
         send.add(new BasicNameValuePair("bomb_id", String.valueOf(bomb_id)));
-		NetworkThread t = new NetworkThread(send,"bomb_id");
+		NetworkThread t = new NetworkThread(send,"explode");
 		t.start();
 		try {t.join();} catch (InterruptedException e) {}
 		return t.result;
@@ -120,8 +121,8 @@ public class ServerInfo {
 				while(in.read(buffer) > 0){
 					s += String.valueOf(buffer).trim();
 				}
-				in.close();
 				System.out.println(s);
+				in.close();
 				try {
 					result = new JSONObject(s);
 				} catch (JSONException e) {
