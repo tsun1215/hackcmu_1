@@ -21,7 +21,7 @@ class Game(models.Model):
         player.save()
         player.clear_game_info()
         if !self.in_game and self.player_set.count() >= 5:
-            start_game()
+            self.start_game()
     
     def reassign_missions(self):
         mission_arr = generate_mission([p.device_id for p in self.player_set.all().order_by("pk")])
