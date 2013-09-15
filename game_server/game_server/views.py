@@ -35,7 +35,6 @@ def register_device(request):
                                 first_name=request.POST.get("f_name"), 
                                 last_name=request.POST.get("l_name"), 
                                 device_id=request.POST.get("device_id"))
-            import ipdb; ipdb.set_trace()
             return HttpResponse(simplejson.dumps(request.POST), content_type="application/json")
             new_player.save()
         return HttpResponse(simplejson.dumps({"success": True, 
