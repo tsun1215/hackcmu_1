@@ -77,7 +77,7 @@ public class ServerInfo {
 		try{
 			send = new JSONObject();
 			send.put("device_id",id);
-			send.put("game_id", game_id)
+			send.put("game_id", game_id);
 		}catch(JSONException e){
 			e.printStackTrace();
 		}
