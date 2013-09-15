@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -29,9 +30,9 @@ public class GeofenceManager implements ConnectionCallbacks, OnConnectionFailedL
 	private List<Geofence> geofences;
 	public FragmentActivity mainActivity;
 	
-	public void addFence(Coordinate c, float radius){
+	public void addFence(Location c, float radius){
 		geofences=new ArrayList<Geofence>();
-		geofences.add(new Geofence.Builder().setCircularRegion(c.latitude, c.longitude, radius).setExpirationDuration(5*60*1000).setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT).setRequestId("test").build());
+		geofences.add(new Geofence.Builder().setCircularRegion(c.getLatitude(), c.getLongitude(), radius).setExpirationDuration(5*60*1000).setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT).setRequestId("test").build());
 		addGeofences();
 	}
 

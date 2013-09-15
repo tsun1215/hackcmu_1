@@ -9,13 +9,16 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class Radar extends SurfaceView implements SurfaceHolder.Callback{
+	private final int range = 100;
 	RunnerThread runner;
+	Game g;
 	
 	public Radar(Context context, AttributeSet set) {
 		super(context, set);
 		getHolder().addCallback(this);
 		setFocusable(true);
 		runner = new RunnerThread(getHolder(), this);
+		g=(Game)context;
 	}
 
 	public void repaint(){
@@ -23,12 +26,26 @@ public class Radar extends SurfaceView implements SurfaceHolder.Callback{
 		try{if(c!=null) draw(c);}
 		finally{if(c!=null) getHolder().unlockCanvasAndPost(c);}
 	}
-int i = 0;
+	
 	public void draw(Canvas canvas) {
+		int w = canvas.getWidth();
+		int h = canvas.getHeight();
 		Paint p = new Paint();
+		p.setColor(0xDDDDDDDD);
+		double radius = Math.min(w/2d, h/2d);
+		canvas.drawCircle(w/2, h/2, (float)radius, p);
 		p.setColor(Color.RED);
-		canvas.drawCircle(500, 1000, 50+i, p);
-		i++;
+		synchronized(g.bombs){
+			for(Bomb b : g.bombs){
+				double dist = b.location.distanceTo(g.me.tracker.currentLocation);
+				System.out.println(dist);
+				if(dist < range){
+					double angle = Math.toRadians(90 - g.me.tracker.currentLocation.bearingTo(b.location));
+					int r = (int)(((double)dist/range)*radius);
+					canvas.drawCircle((float)(r*Math.cos(angle)), (float)(r*Math.sin(angle)), 10, p);
+				}
+			}
+		}
 	}
 
 	@Override
